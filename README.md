@@ -34,54 +34,51 @@
 6.	Compile the lex program with lex compiler to produce output file as lex.yy.c. eg $ lex filename.l $ cc lex.yy.c
 7.	Compile that file with C compiler and verify the output.
 
-# INPUT:
+# INPUT
 ```
+%{
 #include <stdio.h>
-#include <ctype.h>
 #include <string.h>
 
-int isKeyword(char buffer[]) {
-    char keywords[5][10] = {"if", "else", "while", "for", "int"};
+int isKeyword(const char *str) {
+    const char *keywords[] = {"if", "else", "while", "for", "int"};
     for (int i = 0; i < 5; ++i) {
-        if (strcmp(buffer, keywords[i]) == 0) {
+        if (strcmp(str, keywords[i]) == 0)
             return 1;
-        }
     }
     return 0;
 }
+%}
 
-int main() {
-    char ch, buffer[15];
-    char operators[] = "+-*/=";
-    int i = 0;
+%%
 
+[ \t\n]+              ; // Ignore whitespace
+"+"|"-"|"*"|"/"|"="   { printf("Operator: %s\n", yytext); }
+[0-9]+                { printf("Number: %s\n", yytext); }
+[a-zA-Z_][a-zA-Z0-9_]* {
+                        if (isKeyword(yytext)) {
+                            printf("Keyword: %s\n", yytext);
+                        } else {
+                            printf("Identifier: %s\n", yytext);
+                        }
+                    }
+
+.                     ; // Ignore other characters
+
+%%
+
+int main(void) {
     printf("Enter your input: ");
-    
-    while ((ch = getchar()) != EOF) {
-        if (strchr(operators, ch)) {
-            printf("Operator: %c\n", ch);
-        } else if (isalnum(ch)) {
-            buffer[i++] = ch;
-        } else if ((ch == ' ' || ch == '\n' || ch == '\t') && i != 0) {
-            buffer[i] = '\0';
-
-            if (isKeyword(buffer)) {
-                printf("Keyword: %s\n", buffer);
-            } else if (isdigit(buffer[0])) {
-                printf("Number: %s\n", buffer);
-            } else {
-                printf("Identifier: %s\n", buffer);
-            }
-            i = 0;
-        }
-    }
-
+    yylex();
     return 0;
+}
+
+int yywrap(void) {
+    return 1;
 }
 ```
-# OUTPUT:
-![375285999-dcaee4bb-6141-43c3-9870-0f3c361fa465](https://github.com/user-attachments/assets/641318bd-1062-4c01-a2d8-87b2ea2401e5)
+# OUTPUT
+![Screenshot 2025-04-15 113735](https://github.com/user-attachments/assets/44c58029-2d56-46fc-b0a9-81a8fb29e515)
 
-
-# RESULT:
-The lexical analyzer is implemented using lex and the output is verified.
+# RESULT
+## The lexical analyzer is implemented using lex and the output is verified.

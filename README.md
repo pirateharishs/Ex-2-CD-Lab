@@ -2,7 +2,7 @@
 
 # DATE: 21/04/25
 # NAME: HARISH S
-# REG-NO: 21222320071
+# REG-NO: 212223230071
 # AIM
 ## To write a lex program to implement lexical analyzer to recognize a few patterns.
 # ALGORITHM
